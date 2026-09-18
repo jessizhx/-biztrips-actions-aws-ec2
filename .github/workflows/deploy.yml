@@ -114,6 +114,10 @@ jobs:
       - name: Buildx einrichten
         uses: docker/setup-buildx-action@v3
 
+      - name: Git-Kurz-SHA bestimmen
+        id: vars
+        run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       # Tagging-Strategie: prod01 (aktuell auf Produktion deployt), latest (letzter
       # erfolgreicher Build) und die Git-Kurz-SHA (unveränderliche Referenz je Commit).
       - name: Image bauen und pushen
@@ -127,4 +131,4 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/biztrips:prod01
             ${{ secrets.DOCKERHUB_USERNAME }}/biztrips:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/biztrips:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/biztrips:${{ steps.vars.outputs.short_sha }}
